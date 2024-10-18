@@ -3,6 +3,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
+EXPOSE 9090
 
 # Instalar la librería faltante libgssapi-krb5-2
 RUN apt-get update && apt-get install -y libgssapi-krb5-2

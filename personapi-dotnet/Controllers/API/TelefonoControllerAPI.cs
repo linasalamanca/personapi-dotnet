@@ -4,7 +4,7 @@
 
 namespace personapi_dotnet.Controllers.API
 {
-    [Route("api/[controller]")]
+    [Route("api/telefonos")]
     [ApiController]
     public class TelefonoControllerAPI : ControllerBase
     {

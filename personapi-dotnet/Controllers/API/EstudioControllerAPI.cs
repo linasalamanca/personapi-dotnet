@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using personapi_dotnet.Models.Entities;
 using personapi_dotnet.Repository;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace personapi_dotnet.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/estudio")]
     [ApiController]
     public class EstudioController : ControllerBase
     {
@@ -22,14 +23,14 @@ namespace personapi_dotnet.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Estudio>>> GetAllEstudios()
         {
-            var estudios = await _estudiosRepository.GetAllEstudiosAsync();
+            var estudios = await _estudiosRepository.GetAllAsync();
             return Ok(estudios);
         }
 
         [HttpGet("{ccPer}/{idProf}")]
         public async Task<ActionResult<Estudio>> GetEstudioById(int ccPer, int idProf)
         {
-            var estudio = await _estudiosRepository.GetEstudioByIdAsync(idProf);
+            var estudio = await _estudiosRepository.GetEstudioByIdAsync(ccPer, idProf);
             if (estudio == null)
             {
                 return NotFound();
@@ -65,13 +66,13 @@ namespace personapi_dotnet.Controllers
         [HttpDelete("{ccPer}/{idProf}")]
         public async Task<ActionResult> DeleteEstudio(int ccPer, int idProf)
         {
-            var estudio = await _estudiosRepository.GetEstudioByIdAsync(idProf);
+            var estudio = await _estudiosRepository.GetEstudioByIdAsync(ccPer, idProf);
             if (estudio == null)
             {
                 return NotFound();
             }
 
-            await _estudiosRepository.DeleteEstudioAsync(idProf);
+            await _estudiosRepository.DeleteEstudioAsync(ccPer, idProf);
             return NoContent();
         }
     }

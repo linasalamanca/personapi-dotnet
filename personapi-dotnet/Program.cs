@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using personapi_dotnet.Repository;
 using personapi_dotnet.Models.Entities;
 using Microsoft.OpenApi.Models;
-
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,5 +63,12 @@ app.MapControllerRoute(
 
 // Escuchar en el puerto 80 y todas las interfaces
 app.Urls.Add("http://0.0.0.0:80");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.Run();

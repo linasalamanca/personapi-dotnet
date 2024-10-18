@@ -4,7 +4,7 @@
 
 namespace personapi_dotnet.Controllers.API
 {
-    [Route("api/[controller]")]
+    [Route("api/profesiones")]
     [ApiController]
     public class ProfesionControllerAPI : ControllerBase
     {

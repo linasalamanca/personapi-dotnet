@@ -5,10 +5,10 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "9090:80"
+      - "9090:9090"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=db;Database=persona_db;User Id=sa;Password=Your_password123;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=db;Database=persona_db;User Id=SA;Password=Your_password123;TrustServerCertificate=True;
     depends_on:
       - db
     networks:
@@ -24,6 +24,9 @@ services:
       - "1433:1433"
     volumes:
       - mssql_data:/var/opt/mssql
+      - ./init.sql:/usr/src/app/personapi-dotnet.dll
+      - ./entrypoint.sh:/usr/src/app/entrypoint.sh
+      - ./init.sql:/usr/src/app/init.sql
     user: root
     networks:
       - my_network
