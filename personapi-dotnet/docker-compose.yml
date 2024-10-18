@@ -1,0 +1,37 @@
+
+services:
+  webapi:
+    image: personapi-dotnet
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=db;Database=arq_per_db;User Id=sa;Password=Your_password123;TrustServerCertificate=True;
+    depends_on:
+      - db
+    networks:
+      - my_network
+
+  db:
+    image: mcr.microsoft.com/mssql/server
+    container_name: db
+    environment:
+      - SA_PASSWORD=Your_password123
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    user: root
+    networks:
+      - my_network
+
+networks:
+    my_network:
+        driver: bridge
+
+volumes:
+  mssql_data:
