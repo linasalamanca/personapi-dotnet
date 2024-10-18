@@ -1,30 +1,28 @@
-# Usa la imagen oficial de .NET 8 SDK para construir el proyecto
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+# Usar la imagen base de .NET 8 SDK
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-
-# Copia el archivo .csproj y restaura las dependencias
-COPY . ./personapi-dotnet/
-WORKDIR /app/personapi-dotnet
-RUN dotnet restore
-
-# Copia el resto del contenido del proyecto y publica la aplicación
-COPY . .
-# Añadir el paquete Swashbuckle.AspNetCore
-RUN dotnet add package Swashbuckle.AspNetCore
-
-# Restaurar dependencias
-RUN dotnet restore
-RUN dotnet publish -c Release -o out
-
-# Usa una imagen ligera de .NET 8 para ejecutar la aplicación
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
-WORKDIR /app
-COPY --from=build-env /app/personapi-dotnet/out .
-
-# Expone el puerto en el que la aplicación correrá
 EXPOSE 80
 EXPOSE 443
 
-# Define el comando que se ejecutará cuando el contenedor inicie
-ENTRYPOINT ["dotnet", "personapi-dotnet.dll"]
+# Instalar la librería faltante libgssapi-krb5-2
+RUN apt-get update && apt-get install -y libgssapi-krb5-2
 
+# Usar la imagen base de .NET 8 SDK para construir
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["personapi-dotnet.csproj", "./"]
+RUN dotnet restore "./personapi-dotnet.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "personapi-dotnet.csproj" -c Release -o /app/build
+
+# Publicar la aplicación
+FROM build AS publish
+RUN dotnet publish "personapi-dotnet.csproj" -c Release -o /app/publish
+
+# Configurar la imagen final
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+ENTRYPOINT ["dotnet", "personapi-dotnet.dll"]

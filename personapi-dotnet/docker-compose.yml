@@ -1,4 +1,3 @@
-
 services:
   webapi:
     image: personapi-dotnet
@@ -6,10 +5,10 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "9090:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=db;Database=arq_per_db;User Id=sa;Password=Your_password123;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=db;Database=persona_db;User Id=sa;Password=Your_password123;TrustServerCertificate=True;
     depends_on:
       - db
     networks:

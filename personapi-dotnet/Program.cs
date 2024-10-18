@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using personapi_dotnet.Repository;
 using personapi_dotnet.Models.Entities;
+using Microsoft.OpenApi.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,26 +23,29 @@ builder.Services.AddScoped<IEstudioRepository, EstudioRepository>();
 builder.Services.AddDbContext<PersonaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Agregar Swagger al contenedor de servicios
+// Agregar Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Persona API", Version = "v1" });
+});
 
 var app = builder.Build();
+
+// Habilitar Swagger
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Persona API V1");
+    c.RoutePrefix = string.Empty; // Serve Swagger UI at the app's root pruebaa
+});
+
 
 // Configurar el middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
-}
-
-
-// Configurar Swagger y Swagger UI
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-app.UseSwaggerUI();
 }
 
 
@@ -55,5 +60,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Escuchar en el puerto 80 y todas las interfaces
+app.Urls.Add("http://0.0.0.0:80");
 
 app.Run();
